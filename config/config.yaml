@@ -1,0 +1,14 @@
+# Proxy Configuration
+proxy: "http://127.0.0.1:7890"
+
+# Downloader Preference: "builtin" (Aria2), "qbittorrent", or "aria2"
+downloader: "builtin"
+
+# Output Directory
+save_path: "./downloads"
+
+# Aria2 Configuration (Optional)
+aria2:
+  host: "http://127.0.0.1"
+  port: 6800
+  secret: ""

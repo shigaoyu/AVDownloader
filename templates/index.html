@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AV Downloader Pro - 管理后台</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #ff4757;
+            --dark-color: #1e272e;
+            --bg-body: #f5f6fa;
+        }
+        body { 
+            background-color: var(--bg-body); 
+            font-family: 'Inter', -apple-system, 'PingFang SC', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar { 
+            background-color: var(--dark-color);
+            padding: 0.8rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .navbar-brand { font-weight: 800; font-size: 1.5rem; color: #fff !important; }
+        
+        /* Consistent Layout - Shared Container */
+        .content-container-fluid {
+            width: 95%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-box, .search-hero, .result-card {
+            width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+            margin-bottom: 2rem;
+        }
+
+        .search-hero {
+            background: linear-gradient(135deg, #ff4757, #ff6b81);
+            padding: 3.5rem 2rem;
+            text-align: center;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(255, 71, 87, 0.15);
+            color: white;
+        }
+
+        .search-hero h1 { 
+            font-weight: 800; 
+            font-size: 2.6rem; 
+            margin-bottom: 1.2rem; 
+            text-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+        }
+
+        .search-group {
+            width: 100%;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        .input-group-huge {
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            border-radius: 16px;
+            overflow: hidden;
+            background: white;
+        }
+        .input-group-huge .form-control {
+            border: none;
+            height: 70px;
+            font-size: 1.5rem;
+            padding: 0 2rem;
+            font-weight: 600;
+        }
+        .input-group-huge .btn {
+            padding-left: 3.5rem;
+            padding-right: 3.5rem;
+            font-weight: 700;
+            font-size: 1.3rem;
+            border: none;
+            background: var(--dark-color);
+            color: white !important;
+        }
+        .input-group-huge .btn:hover { background: #000; }
+        
+        .result-card {
+            border: 1px solid #eee;
+            border-radius: 20px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            background: #fff;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.06);
+            min-width: 0;
+        }
+        .result-cover {
+            background: #f0f0f0;
+            position: relative;
+            min-height: 280px;
+        }
+        .result-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .result-info {
+            padding: 2rem;
+            min-width: 0;
+        }
+
+        .section-box {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .magnet-table-wrapper {
+            max-height: 400px;
+            overflow-y: auto;
+            overflow-x: auto;
+            border: 1px solid #f0f0f0;
+            border-radius: 12px;
+            margin-top: 1.5rem;
+        }
+        .table { 
+            margin-bottom: 0; 
+            table-layout: fixed;
+            width: 100%;
+        }
+        .table th { background: #fbfbfb; font-size: 0.85rem; padding: 0.8rem; color: #7f8fa6; border-top: none; }
+        .table td { vertical-align: middle; font-size: 0.95rem; padding: 0.8rem; border-color: #f1f2f6; overflow: hidden; }
+
+        /* Task List Grid - Compact & Cardified */
+        #taskList {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .task-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid #f1f2f6;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border-top: 5px solid #dfe4ea;
+        }
+        .task-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08); 
+        }
+        
+        /* Status-specific top borders */
+        .task-card.active { border-top-color: var(--primary-color); }
+        .task-card.complete { border-top-color: #2ed573; }
+        .task-card.paused { border-top-color: #ffa502; }
+        .task-card.error { border-top-color: #ff4757; }
+
+        .progress { 
+            height: 10px; 
+            border-radius: 10px; 
+            margin-bottom: 1.2rem; 
+            background-color: #f1f2f6; 
+            overflow: hidden;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .progress-bar { 
+            background: linear-gradient(90deg, #ff4757, #ff6b81); 
+            border-radius: 10px; 
+            transition: width 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+        
+        .status-online { display: inline-block; width: 10px; height: 10px; background: #2ed573; border-radius: 50%; box-shadow: 0 0 10px rgba(46, 213, 115, 0.5); }
+        .status-offline { display: inline-block; width: 10px; height: 10px; background: #ff4757; border-radius: 50%; }
+
+        #toast-box { position: fixed; bottom: 30px; right: 30px; z-index: 9999; }
+        
+        .btn-copy { color: #7f8fa6; font-size: 0.85rem; padding: 0.2rem 0.5rem; }
+        .btn-copy:hover { color: var(--primary-color); }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #999; }
+
+        .btn-xs { padding: 0.25rem 0.5rem; font-size: 0.75rem; line-height: 1.5; border-radius: 0.2rem; }
+        
+        @media (max-width: 992px) {
+            .result-card { grid-template-columns: 1fr; }
+            .result-cover { width: 100%; height: auto; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><i class="bi bi-cloud-arrow-down-fill me-3 text-danger"></i>AV Downloader Pro</a>
+            <div class="d-flex align-items-center text-white px-3 bg-white bg-opacity-10 rounded-pill py-2">
+                <span id="aria2StatusIcon" class="status-offline"></span>
+                <span class="fw-bold small">ENGINE: <span id="aria2StatusText" class="ms-1">DISCONNECTED</span></span>
+                <span class="mx-3 opacity-25">|</span>
+                <span class="small opacity-75">PROXY: 127.0.0.1:7890</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content py-4">
+        <div class="content-container-fluid">
+            <!-- 搜索大背景区 -->
+            <div class="search-hero shadow-lg">
+                <h1 class="text-white">全球番号搜寻 · 极速云下载</h1>
+                <p class="fs-5 text-white opacity-75 mb-4 fw-bold">实时同步 JAVBus / JAVDB 数据库 · 智能筛选最优磁力资源</p>
+                <div class="search-group">
+                    <div class="input-group input-group-huge">
+                        <input type="text" id="searchInput" class="form-control" placeholder="输入番号 (如: SSIS-123...)" autocomplete="off">
+                        <button class="btn btn-danger" type="button" id="searchBtn">
+                            搜寻
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="searchLoader" class="text-center py-4" style="display:none;">
+                <div class="spinner-border text-danger" style="width: 2.5rem; height: 2.5rem;" role="status"></div>
+                <p class="text-muted mt-3 fs-6 fw-bold">正在搜寻全球磁力节点...</p>
+            </div>
+
+            <div id="searchResultArea"></div>
+
+            <!-- 下载管理区 -->
+            <div class="mt-4">
+                <div class="section-box">
+                    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+                        <h5 class="fw-bold m-0 text-uppercase text-danger"><i class="bi bi-hdd-network me-2"></i>活跃下载任务</h5>
+                        <div class="d-flex gap-2 align-items-center">
+                            <span class="badge bg-dark px-2 py-1" id="aria2Status">
+                                <span id="aria2StatusIconSmall"></span>
+                                <span id="aria2StatusTextSmall">...</span>
+                            </span>
+                            <button class="btn btn-outline-danger btn-sm rounded-pill" onclick="syncStatus()">
+                                <i class="bi bi-arrow-clockwise"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="taskList">
+                        <div class="col-12 text-center py-5 text-muted" id="noTasks">
+                            <i class="bi bi-inbox fs-2 opacity-10 d-block mb-2"></i>
+                            <p class="fs-6">暂无活跃任务</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-box"></div>
+
+    <script>
+        const API_BASE = window.location.origin + '/api';
+
+        document.getElementById('searchBtn').addEventListener('click', async () => {
+            const code = document.getElementById('searchInput').value.trim();
+            if (!code) return;
+
+            const loader = document.getElementById('searchLoader');
+            const resultArea = document.getElementById('searchResultArea');
+            const btn = document.getElementById('searchBtn');
+
+            resultArea.innerHTML = '';
+            loader.style.display = 'block';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/search`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code })
+                });
+                
+                if (!response.ok) throw new Error('搜寻超时，请稍后重试');
+                const data = await response.json();
+                renderSearchResult(data);
+                
+                window.scrollTo({ top: document.querySelector('.search-hero').offsetHeight + 20, behavior: 'smooth' });
+            } catch (err) {
+                notify(err.message, 'danger');
+            } finally {
+                loader.style.display = 'none';
+                btn.disabled = false;
+            }
+        });
+
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('searchBtn').click();
+        });
+
+        function renderSearchResult(data) {
+            const area = document.getElementById('searchResultArea');
+            const proxiedCover = `${API_BASE}/proxy_image?url=${encodeURIComponent(data.cover)}`;
+
+            area.innerHTML = `
+                <div class="result-card shadow-sm animate__animated animate__fadeInUp">
+                    <div class="result-cover">
+                        <img src="${proxiedCover}" onerror="this.src='https://via.placeholder.com/450x300?text=No+Cover'">
+                    </div>
+                    <div class="result-info">
+                        <h4 class="fw-bold mb-3">${data.title}</h4>
+                        <div class="d-flex gap-2 mb-3">
+                            <span class="badge bg-danger">SOURCE: ${data.source.toUpperCase()}</span>
+                            <span class="badge bg-secondary">${data.magnets.length} 磁力节点</span>
+                        </div>
+                        
+                        <div class="magnet-table-wrapper">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 45%;">资源名称</th>
+                                        <th style="width: 15%;">大小</th>
+                                        <th style="width: 40%;">快速操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${data.magnets.map(m => `
+                                        <tr>
+                                            <td class="text-truncate" title="${m.name.replace(/"/g, '&quot;')}">${m.name}</td>
+                                            <td class="fw-bold text-primary">${m.size}</td>
+                                            <td>
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    <button class="btn btn-xs btn-danger rounded-pill px-2 py-1 fw-bold" style="font-size: 0.75rem;"
+                                                            onclick="submitDownload(decodeURIComponent('${encodeURIComponent(m.link).replace(/'/g, "%27")}'), decodeURIComponent('${encodeURIComponent(data.title).replace(/'/g, "%27")}'))">
+                                                        <i class="bi bi-cloud-download"></i> 云下载
+                                                    </button> 
+                                                    <a href="${m.link}" class="btn btn-xs btn-outline-dark rounded-pill px-2 py-1 fw-bold" style="font-size: 0.75rem;">
+                                                        <i class="bi bi-link-45deg"></i> 外部
+                                                    </a>
+                                                    <button class="btn btn-link btn-copy p-0 text-decoration-none" onclick="copyToClipboard(decodeURIComponent('${encodeURIComponent(m.link).replace(/'/g, "%27")}'))">
+                                                        <i class="bi bi-clipboard"></i> 复制
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function submitDownload(magnet, title) {
+            try {
+                const res = await fetch(`${API_BASE}/download`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ magnet, title })
+                });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                notify('任务已建立，解析中...', 'success');
+                syncStatus();
+            } catch (err) {
+                notify(err.message, 'danger');
+            }
+        }
+
+        async function manageTask(gid, action) {
+            try {
+                await fetch(`${API_BASE}/task/${action}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ gid })
+                });
+                syncStatus();
+            } catch (err) {
+                notify('操作失败', 'danger');
+            }
+        }
+
+        async function syncStatus() {
+            try {
+                const res = await fetch(`${API_BASE}/status`);
+                const tasks = await res.json();
+                
+                const icon = document.getElementById('aria2StatusIcon');
+                const text = document.getElementById('aria2StatusText');
+                icon.className = 'status-online';
+                text.innerText = 'ONLINE';
+
+                const list = document.getElementById('taskList');
+                const noTasks = document.getElementById('noTasks');
+
+                if (tasks.length === 0) {
+                    noTasks.style.display = 'block';
+                    list.querySelectorAll('.task-item').forEach(el => el.remove());
+                    return;
+                }
+
+                noTasks.style.display = 'none';
+                tasks.forEach(task => {
+                    let progress = 0;
+                    if (task.total_length > 0) {
+                        progress = ((task.completed_length_raw / task.total_length_raw) * 100).toFixed(1);
+                    }
+                    
+                    let el = document.getElementById(`task-${task.gid}`);
+                    if (!el) {
+                        el = document.createElement('div');
+                        el.id = `task-${task.gid}`;
+                        el.className = 'task-item';
+                        list.appendChild(el);
+                    }
+
+                    const statusClass = task.status === 'active' ? 'bg-primary' : (task.status === 'complete' ? 'bg-success' : 'bg-warning');
+                    const cardStatus = task.status; // 'active', 'complete', 'paused', etc.
+                    
+                    el.innerHTML = `
+                        <div class="task-card ${cardStatus}">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h6 class="text-truncate pe-2 fw-bold m-0" style="max-width: 80%; font-size: 1rem; color: #2d3436;" title="${task.name}">${task.name}</h6>
+                                <span class="badge ${statusClass} rounded-pill px-2 py-1" style="font-size: 0.7rem;">${task.status.toUpperCase()}</span>
+                            </div>
+                            
+                            <div class="progress">
+                                <div class="progress-bar ${task.status === 'active' ? 'progress-bar-striped progress-bar-animated' : ''}" 
+                                     style="width: ${progress}%"></div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex flex-column">
+                                    <span class="text-muted" style="font-size: 0.75rem;"><i class="bi bi-speedometer2 me-1"></i>速度</span>
+                                    <span class="fw-bold text-dark" style="font-size: 0.9rem;">${task.download_speed}</span>
+                                </div>
+                                <div class="d-flex flex-column text-center">
+                                    <span class="text-muted" style="font-size: 0.75rem;"><i class="bi bi-percent me-1"></i>进度</span>
+                                    <span class="fw-bold text-danger" style="font-size: 1.1rem;">${progress}%</span>
+                                </div>
+                                <div class="d-flex flex-column text-end">
+                                    <span class="text-muted" style="font-size: 0.75rem;"><i class="bi bi-clock me-1"></i>剩余</span>
+                                    <span class="fw-bold text-dark" style="font-size: 0.9rem;">${task.eta}</span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto">
+                                <div class="text-muted" style="font-size: 0.75rem;">
+                                    <i class="bi bi-file-earmark-arrow-down me-1"></i>${task.completed_length} / ${task.total_length}
+                                </div>
+                                <div class="d-flex gap-2">
+                                    ${task.status === 'paused' ? 
+                                        `<button class="btn btn-sm btn-outline-success rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0;" onclick="manageTask('${task.gid}', 'resume')" title="恢复"><i class="bi bi-play-fill"></i></button>` :
+                                        `<button class="btn btn-sm btn-outline-warning rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0;" onclick="manageTask('${task.gid}', 'pause')" title="暂停"><i class="bi bi-pause-fill"></i></button>`
+                                    }
+                                    <button class="btn btn-sm btn-outline-danger rounded-circle shadow-sm" style="width: 32px; height: 32px; padding: 0;" onclick="manageTask('${task.gid}', 'remove')" title="删除"><i class="bi bi-trash3-fill"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                const gids = tasks.map(t => `task-${t.gid}`);
+                list.querySelectorAll('.task-item').forEach(el => {
+                    if (!gids.includes(el.id)) el.remove();
+                });
+
+            } catch (err) {
+                document.getElementById('aria2StatusIcon').className = 'status-offline';
+                document.getElementById('aria2StatusText').innerText = 'ERROR';
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                notify('已复制', 'info');
+            });
+        }
+
+        function notify(msg, type) {
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type} shadow border-0 mb-2 py-2 px-3 small animate__animated animate__fadeInRight`;
+            toast.style.borderRadius = '10px';
+            toast.innerHTML = `<i class="bi bi-info-circle-fill me-2"></i>${msg}`;
+            document.getElementById('toast-box').appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        setInterval(syncStatus, 2000);
+        syncStatus();
+    </script>
+</body>
+</html>
