@@ -1,6 +1,0 @@
-Parse error in /Users/gaoyu/Desktop/WorkSpace/个人项目/AV下载/aria2.conf
-Exception: [AbstractOptionHandler.cc:69] errorCode=28 We encountered a problem while processing the option '--dht-entry-point'.
-  -> [OptionHandlerImpl.cc:469] errorCode=1 Unrecognized format
-Usage:
- --dht-entry-point=HOST:PORT  Set host and port as an entry point to IPv4 DHT
-                              network.
