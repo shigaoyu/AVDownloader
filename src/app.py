@@ -188,4 +188,6 @@ def resume_task():
 
 if __name__ == '__main__':
     print("Web UI started at http://localhost:5001")
+    print("If you are on Windows, run with: python src/app.py")
+    print("If you are on macOS/Linux, run with: python3 src/app.py")
     app.run(host='0.0.0.0', port=5001, debug=True)

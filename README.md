@@ -37,20 +37,37 @@
 pip3 install flask flask-cors httpx beautifulsoup4 pyyaml aria2p
 ```
 
-### 2. 安装下载核心 (macOS 推荐)
+### 2. 安装下载核心 (Engines)
+
+#### **macOS (推荐)**
 ```bash
 brew install aria2 transmission-cli
 ```
 
+#### **Windows**
+1. **安装 Aria2**: 
+   - 推荐使用 [Scoop](https://scoop.sh/): `scoop install aria2`
+   - 或从 [Aria2 GitHub](https://github.com/aria2/aria2/releases) 下载 `.exe` 并添加到系统环境变量 `PATH`。
+2. **安装 Transmission (可选)**:
+   - 下载 [Transmission Windows 版](https://transmissionbt.com/download)，并确保 `transmission-daemon` 可通过命令行调用。
+3. **防火墙配置**:
+   - 确保 `aria2c.exe` 和 `python.exe` 已在 Windows 防火墙中允许通过，以正常进行 P2P 通信。
+
 ### 3. 配置代理与路径
 编辑 `config/config.yaml`：
 - `proxy`: 配置你的本地代理（如 `http://127.0.0.1:7890`）以访问元数据服务器。
-- `save_path`: 设定你的视频保存目录。
+- `save_path`: 设定你的视频保存目录（Windows 用户请使用双反斜杠 `\\` 或正斜杠 `/`，例如 `D:/Downloads`）。
 
 ### 4. 启动服务
+
+#### **macOS / Linux**
 ```bash
-# 启动 Web 服务 (默认端口 5001)
 python3 src/app.py
+```
+
+#### **Windows**
+```powershell
+python src\app.py
 ```
 访问浏览器： [http://127.0.0.1:5001](http://127.0.0.1:5001) 即可开始。
 

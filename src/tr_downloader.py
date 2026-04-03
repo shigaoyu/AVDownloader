@@ -2,10 +2,11 @@ import subprocess
 import os
 import json
 import time
+import sys
 
 class TransmissionDownloader:
     """
-    Downloader using 'transmission-cli' (native Mac tool).
+    Downloader using 'transmission-cli' (native Mac/Linux/Windows tool).
     Super stable, handles magnets perfectly, supports RPC.
     """
     def __init__(self, save_path="./downloads"):
@@ -17,7 +18,12 @@ class TransmissionDownloader:
         # -w: download directory
         # -a: allow all origins (for local web UI if needed)
         try:
-            subprocess.run(["pkill", "-f", "transmission-daemon"], check=False)
+            if sys.platform == "win32":
+                # Windows equivalent of pkill
+                subprocess.run(["taskkill", "/F", "/IM", "transmission-daemon.exe"], 
+                               check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            else:
+                subprocess.run(["pkill", "-f", "transmission-daemon"], check=False)
             
             # TRACKERS: Inject 50+ high quality trackers to boost magnet discovery
             trackers = [
